@@ -1,9 +1,11 @@
 os: osx
 
+language: 
+
 script:
     - cd rasterview-sample-files
-    - echo $(ls -l /usr/libexec/cups/filter)
-    - ./maketestfiles.sh all help
+    - echo "$(ls -l /usr/libexec/cups/filter)"
+    - ./maketestfiles.sh help
     #- ./maketestfiles.sh all pstoraster apple
     #- ./maketestfiles.sh all pstoraster pwg
     #- ./maketestfiles.sh all pstoraster ras
@@ -18,6 +20,10 @@ script:
     - find . -type f -name "*.apple"
     - find . -type f -name "*.pwg"
     - find . -type f -name "*.log"
+    - file *.ras
+    - file *.apple
+    - file *.pwg
+    - file *.log
     - rm -rf *.log
     - cd ..
     - tar cvzf rasterview-sample-files.tar.gz rasterview-sample-files/
