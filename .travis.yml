@@ -26,7 +26,7 @@ script:
     - file *.log
     - rm -rf *.log
     - cd ..
-    - tar cvzf rasterview-sample-files.tar.gz rasterview-sample-files/
+    - COPYFILE_DISABLE=1 tar cvzf rasterview-sample-files.tar.gz rasterview-sample-files/
     - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
     - bash upload.sh rasterview-sample-files.tar.gz
 
