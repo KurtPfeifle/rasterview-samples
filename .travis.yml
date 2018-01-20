@@ -13,11 +13,14 @@ script:
     #- ./maketestfiles.sh all cgimagetoraster apple
     #- ./maketestfiles.sh all cgimagetoraster pwg
     #- ./maketestfiles.sh all cgimagetoraster ras
-    - for i in *.apple *.ras *.pwg ; do gzip $i ; done
     - find . -type f -name "*.ras"
     - find . -type f -name "*.apple"
     - find . -type f -name "*.pwg"
     - find . -type f -name "*.log"
+    - for i in *.apple *.ras *.pwg ; do gzip $i ; done
+    - for i in $(ls -1 *.apple | head -n 1) ; gunzip $i ; done
+    - for i in $(ls -1 *.ras | tail -n 1) ; gunzip $i ; done
+    - for i in $(ls -1 *.pwg | tail -n 5 | head -n 1) ; gunzip $i ; done
     - rm -rf *.log
     - cd ..
     - tar cvzf rasterview-sample-files.tar.gz rasterview-sample-files/
