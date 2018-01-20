@@ -1,20 +1,22 @@
 os: osx
 
-language: 
+language:
 
 script:
-    - cd rasterview-sample-files
+    - find . -type f
+    - find . -type f -name maketestfiles.sh
+    - cd raster-sample-files
     - echo "$(ls -l /usr/libexec/cups/filter)"
     - ./maketestfiles.sh help
-    #- ./maketestfiles.sh all pstoraster apple
-    #- ./maketestfiles.sh all pstoraster pwg
-    #- ./maketestfiles.sh all pstoraster ras
+      #- ./maketestfiles.sh all pstoraster apple
+      #- ./maketestfiles.sh all pstoraster pwg
+      #- ./maketestfiles.sh all pstoraster ras
     - ./maketestfiles.sh all cgpdftoraster apple
     - ./maketestfiles.sh all cgpdftoraster pwg
     - ./maketestfiles.sh all cgpdftoraster ras
-    #- ./maketestfiles.sh all cgimagetoraster apple
-    #- ./maketestfiles.sh all cgimagetoraster pwg
-    #- ./maketestfiles.sh all cgimagetoraster ras
+      #- ./maketestfiles.sh all cgimagetoraster apple
+      #- ./maketestfiles.sh all cgimagetoraster pwg
+      #- ./maketestfiles.sh all cgimagetoraster ras
     - for i in *.apple *.ras *.pwg ; do gzip $i ; done
     - find . -type f -name "*.ras"
     - find . -type f -name "*.apple"
