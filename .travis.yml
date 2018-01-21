@@ -17,8 +17,8 @@ script:
     - ls -l /usr/libexec/cups/filter
 
       # What are our MIME type and conversion definitions?
-    - for i in /usr/share/cups/*.convs ; do echo $i ; cat $i ; echo ; done
-    - for i in /usr/share/cups/*.types ; do echo $i ; cat $i ; echo ; done
+    - for i in /usr/share/cups/mime/*.convs ; do echo $i ; cat $i ; echo ; done
+    - for i in /usr/share/cups/mime/*.types ; do echo $i ; cat $i ; echo ; done
 
       # Does maketestfiles.sh work?
     - ./maketestfiles.sh help
