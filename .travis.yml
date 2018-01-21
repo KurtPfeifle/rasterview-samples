@@ -5,76 +5,75 @@ language:
 script:
       # Which OS are we on?
     - uname -a
-    - echo "macOS Version: $(sw_vers -productVersion)"
     - sw_vers
     - system_profiler SPSoftwareDataType
-    
+
       # What files are here?
     - find . -type f
     - find . -type f -name maketestfiles.sh
     - cd raster-sample-files
-    
+
       # Which CUPS filters are we equipped with?
-    - echo "$(ls -l /usr/libexec/cups/filter)"
-    
+    - ls -l /usr/libexec/cups/filter
+
       # What are our MIME type and conversion definitions?
     - for i in /usr/share/cups/*.convs ; do echo $i ; cat $i ; echo ; done
     - for i in /usr/share/cups/*.types ; do echo $i ; cat $i ; echo ; done
-    
+
       # Does maketestfiles.sh work?
     - ./maketestfiles.sh help
-      #- ./maketestfiles.sh all pstoraster apple
-      #- ./maketestfiles.sh all pstoraster pwg
-      #- ./maketestfiles.sh all pstoraster ras
+    - ./maketestfiles.sh all pstoraster apple
+    - ./maketestfiles.sh all pstoraster pwg
+    - ./maketestfiles.sh all pstoraster ras
     - ./maketestfiles.sh all cgpdftoraster apple
     - ./maketestfiles.sh all cgpdftoraster pwg
     - ./maketestfiles.sh all cgpdftoraster ras
-      #- ./maketestfiles.sh all cgimagetoraster apple
-      #- ./maketestfiles.sh all cgimagetoraster pwg
-      #- ./maketestfiles.sh all cgimagetoraster ras
-      
+    - ./maketestfiles.sh all cgimagetoraster apple
+    - ./maketestfiles.sh all cgimagetoraster pwg
+    - ./maketestfiles.sh all cgimagetoraster ras
+
       # Which raster files have we produced?
     - find . -type f -name "*.ras"
     - find . -type f -name "*.apple"
     - find . -type f -name "*.pwg"
     - find . -type f -name "*.log"
-    
+
       # How many of each?
-    - echo "Error log files:    $(find . -type f -name "*.log"   | wc -l)"
-    - echo "Apple raster files: $(find . -type f -name "*.apple" | wc -l)"
-    - echo "PWG raster files:   $(find . -type f -name "*.pwg"   | wc -l)"
-    - echo "CUPS raster files:  $(find . -type f -name "*.ras"   | wc -l)"
-    
+    - find . -type f -name "*.log"   | wc -l
+    - find . -type f -name "*.apple" | wc -l
+    - find . -type f -name "*.pwg"   | wc -l
+    - find . -type f -name "*.ras"   | wc -l
+
       # How much disk space does that need?
     - du -hsc *.ras *.apple *.pwg *.log | tail -n 3
-    
+
       # Can 'file' determine what these are?
     - file *.ras   | head -n 20
     - file *.apple | head -n 20
     - file *.pwg   | head -n 20
     - file *.log   | head -n 20
-    
+
       # Compress all raster files:
     - for i in *.apple *.ras *.pwg ; do gzip $i ; done
-    
+
       # How much disk space now?
     - du -hsc *.ras.gz *.apple.gz *.pwg.gz | tail -n 3
-    
+
       # Uncompress 3 random files again, one of each type:
     - for i in $(ls -1 *.apple | head -n 1) ; do gunzip $i ; done
     - for i in $(ls -1 *.ras   | tail -n 1) ; do gunzip $i ; done
     - for i in $(ls -1 *.pwg   | tail -n 5 | head -n 1) ; do gunzip $i ; done
-    
+
       # Compress all error logs into their own tarball:
     - COPYFILE_DISABLE=1 tar cvzf error-logs.tar.gz *.log
     - ls -lh error-logs.tar.gz
-    
+
       # Create the final tarball:
     - cd ..
     - du -hsc raster-sample-files
     - COPYFILE_DISABLE=1 tar cvzf raster-sample-files.tar.gz raster-sample-files/
     - du -hsc raster-sample-files.tar.gz
-    
+
       # Upload the results
     - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
     - bash upload.sh raster-sample-files.tar.gz

@@ -31,6 +31,14 @@ for file in pdftoraster cgpdftoraster; do
 	fi
 done
 
+
+for file in pstoraster pstocupsraster; do
+	if test -x $filterpath/$file; then
+		ps_to_raster=$file
+		break
+	fi
+done
+
 for option in $*; do
 	case $option in
 		1 | 2 | 4 | 8 | 16)
@@ -166,7 +174,7 @@ for cspace in $cspaces; do
 					($filterpath/pstops job user title 1 \
 						"ColorModel=$cspace cupsBitsPerColor=$depth cupsColorOrder=$order" \
 						$basedir/testprint.ps | \
-					$filterpath/pstoraster job user \
+					$filterpath/$ps_to_raster job user \
 						title 1 \
 						"") \
 						> $filter-$cspace-$depth-$order.$format \
