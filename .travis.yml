@@ -75,19 +75,21 @@ script:
     - for i in $(ls -1 *.ras.gz   | tail -n 1) ; do gunzip $i ; done
     - for i in $(ls -1 *.pwg.gz   | tail -n 5 | head -n 1) ; do gunzip $i ; done
 
+      # Set up a VERSION string:
+    - VERSION=$TRAVIS_BUILD_NUMBER-$(date "+%Y%m%d")
       # Compress all error logs into their own tarball:
-    - COPYFILE_DISABLE=1 tar cvzf error-logs.tar.gz *.log
-    - ls -lh error-logs.tar.gz
+    - COPYFILE_DISABLE=1 tar cvzf error-logs-$VERSION.tar.gz *.log
+    - ls -lh error-logs-$VERSION.tar.gz
 
       # Create the final tarball:
     - cd ..
     - du -hsc raster-sample-files
-    - COPYFILE_DISABLE=1 tar cvzf raster-sample-files.tar.gz raster-sample-files/
-    - du -hsc raster-sample-files.tar.gz
+    - COPYFILE_DISABLE=1 tar cvzf raster-sample-files-$VERSION.tar.gz raster-sample-files/
+    - du -hsc raster-sample-files-$VERSION.tar.gz
 
       # Upload the results:
     - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
-    - bash upload.sh raster-sample-files.tar.gz
+    - bash upload.sh raster-sample-files-$VERSION.tar.gz
 
       # Any changes in our Travis environment?
     - env | grep -i travis
