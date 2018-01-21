@@ -71,9 +71,9 @@ script:
     - du -hsc *.ras.gz *.apple.gz *.pwg.gz | tail -n 1
 
       # Uncompress 3 random files again, one of each type:
-    - for i in $(ls -1 *.apple | head -n 1) ; do gunzip $i ; done
-    - for i in $(ls -1 *.ras   | tail -n 1) ; do gunzip $i ; done
-    - for i in $(ls -1 *.pwg   | tail -n 5 | head -n 1) ; do gunzip $i ; done
+    - for i in $(ls -1 *.apple.gz | head -n 1) ; do gunzip $i ; done
+    - for i in $(ls -1 *.ras.gz   | tail -n 1) ; do gunzip $i ; done
+    - for i in $(ls -1 *.pwg.gz   | tail -n 5 | head -n 1) ; do gunzip $i ; done
 
       # Compress all error logs into their own tarball:
     - COPYFILE_DISABLE=1 tar cvzf error-logs.tar.gz *.log
