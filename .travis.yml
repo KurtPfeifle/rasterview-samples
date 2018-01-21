@@ -27,9 +27,9 @@ script:
     - file *.pwg
     - file *.log
     - for i in *.apple *.ras *.pwg ; do gzip $i ; done
-    - for i in $(ls -1 *.apple | head -n 1) ; gunzip $i ; done
-    - for i in $(ls -1 *.ras | tail -n 1) ; gunzip $i ; done
-    - for i in $(ls -1 *.pwg | tail -n 5 | head -n 1) ; gunzip $i ; done
+    - for i in $(ls -1 *.apple | head -n 1) ; do gunzip $i ; done
+    - for i in $(ls -1 *.ras | tail -n 1) ; do gunzip $i ; done
+    - for i in $(ls -1 *.pwg | tail -n 5 | head -n 1) ; do gunzip $i ; done
     - rm -rf *.log
     - cd ..
     - COPYFILE_DISABLE=1 tar cvzf raster-sample-files.tar.gz raster-sample-files/
