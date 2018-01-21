@@ -3,14 +3,18 @@ os: osx
 language:
 
 script:
+
+      # What is our Travis environment?
+    - env | grep -i travis
+
       # Which OS are we on?
     - uname -a
     - sw_vers
     - system_profiler SPSoftwareDataType
 
       # What files are here?
-    - find . -type f
-    - find . -type f -name maketestfiles.sh
+    - find . -not -iwholename '*.git' -type f
+    - find . -not -iwholename '*.git' -type f -name maketestfiles.sh
     - cd raster-sample-files
 
       # Which CUPS filters are we equipped with?
@@ -32,11 +36,11 @@ script:
     - ./maketestfiles.sh all cgimagetoraster pwg
     - ./maketestfiles.sh all cgimagetoraster ras
 
-      # Which raster files have we produced?
-    - find . -type f -name "*.ras"
-    - find . -type f -name "*.apple"
-    - find . -type f -name "*.pwg"
-    - find . -type f -name "*.log"
+      # Which and how many raster files have we produced?
+    - find . -type f -name "*.ras"   | tail -n 20
+    - find . -type f -name "*.apple" | tail -n 20
+    - find . -type f -name "*.pwg"   | tail -n 20
+    - find . -type f -name "*.log"   | tail -n 20
 
       # How many of each?
     - find . -type f -name "*.log"   | wc -l
@@ -45,7 +49,11 @@ script:
     - find . -type f -name "*.ras"   | wc -l
 
       # How much disk space does that need?
-    - du -hsc *.ras *.apple *.pwg *.log | tail -n 3
+    - du -hsc *.ras                     | tail -n 1
+    - du -hsc       *.apple             | tail -n 1
+    - du -hsc               *.pwg       | tail -n 1
+    - du -hsc                     *.log | tail -n 1
+    - du -hsc *.ras *.apple *.pwg *.log | tail -n 1
 
       # Can 'file' determine what these are?
     - file *.ras   | head -n 20
@@ -57,7 +65,10 @@ script:
     - for i in *.apple *.ras *.pwg ; do gzip $i ; done
 
       # How much disk space now?
-    - du -hsc *.ras.gz *.apple.gz *.pwg.gz | tail -n 3
+    - du -hsc *.ras.gz                     | tail -n 1
+    - du -hsc          *.apple.gz          | tail -n 1
+    - du -hsc                     *.pwg.gz | tail -n 1
+    - du -hsc *.ras.gz *.apple.gz *.pwg.gz | tail -n 1
 
       # Uncompress 3 random files again, one of each type:
     - for i in $(ls -1 *.apple | head -n 1) ; do gunzip $i ; done
@@ -74,9 +85,12 @@ script:
     - COPYFILE_DISABLE=1 tar cvzf raster-sample-files.tar.gz raster-sample-files/
     - du -hsc raster-sample-files.tar.gz
 
-      # Upload the results
+      # Upload the results:
     - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
     - bash upload.sh raster-sample-files.tar.gz
+
+      # Any changes in our Travis environment?
+    - env | grep -i travis
 
 after_success:
   # Do nothing for now
