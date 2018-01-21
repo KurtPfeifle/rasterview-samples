@@ -34,7 +34,7 @@ script:
     - cd ..
     - COPYFILE_DISABLE=1 tar cvzf raster-sample-files.tar.gz raster-sample-files/
     - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
-    - bash upload.sh rasterview-sample-files.tar.gz
+    - bash upload.sh raster-sample-files.tar.gz
 
 after_success:
   # Do nothing for now
