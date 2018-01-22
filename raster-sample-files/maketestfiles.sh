@@ -105,7 +105,7 @@ for option in $*; do
 			exit 0
 			;;
 
-		help)
+		help|--help|-h)
 			echo "Usage: $0 [filter] [format] [colorspace(s)] [depth(s)] [order(s)]"
 			echo "       $0 [filter] [format] [all]"
 			echo "       $0 clean"
