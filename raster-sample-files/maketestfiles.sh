@@ -96,12 +96,18 @@ for option in $*; do
 			;;
 
 		clean)
-			rm -f *.apple *.pwg *.ras *.log
+			rm -f *.apple
+			rm -f *.pwg
+			rm -f *.ras
+			rm -f *.log
 			exit 0
 			;;
 
 		failedclean)
-			rm -f *-FAILED.apple *-FAILED.pwg *-FAILED.ras *.log
+			rm -f *-FAILED.apple
+			rm -f *-FAILED.pwg
+			rm -f *-FAILED.ras
+			rm -f *.log
 			exit 0
 			;;
 
