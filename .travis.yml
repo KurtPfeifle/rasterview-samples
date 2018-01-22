@@ -11,10 +11,12 @@ script:
     - uname -a
     - sw_vers
     - system_profiler SPSoftwareDataType
+    - df -h
+    - mount
 
       # What files are here?
-    - find . -not -iwholename '*.git' -type f
-    - find . -not -iwholename '*.git' -type f -name maketestfiles.sh
+    - find . -not -iwholename '.git' -type f
+    - find . -not -iwholename '.git' -type f -name maketestfiles.sh
     - cd raster-sample-files
 
       # Which CUPS filters are we equipped with?
@@ -37,10 +39,10 @@ script:
     - ./maketestfiles.sh all cgimagetoraster ras
 
       # Which and how many raster files have we produced?
-    - find . -type f -name "*.ras"   | tail -n 20
-    - find . -type f -name "*.apple" | tail -n 20
-    - find . -type f -name "*.pwg"   | tail -n 20
-    - find . -type f -name "*.log"   | tail -n 20
+    - find . -type f -name "*.ras"   | tail -n 10
+    - find . -type f -name "*.apple" | tail -n 10
+    - find . -type f -name "*.pwg"   | tail -n 10
+    - find . -type f -name "*.log"   | tail -n 10
 
       # How many of each?
     - find . -type f -name "*.log"   | wc -l
@@ -56,10 +58,10 @@ script:
     - du -hsc *.ras *.apple *.pwg *.log | tail -n 1
 
       # Can 'file' determine what these are?
-    - file *.ras   | head -n 20
-    - file *.apple | head -n 20
-    - file *.pwg   | head -n 20
-    - file *.log   | head -n 20
+    - file *.ras   | head -n 10
+    - file *.apple | head -n 10
+    - file *.pwg   | head -n 10
+    - file *.log   | head -n 10
 
       # Compress all raster files:
     - for i in *.apple *.ras *.pwg ; do gzip $i ; done
@@ -77,9 +79,19 @@ script:
 
       # Set up a VERSION string:
     - VERSION=$TRAVIS_BUILD_NUMBER-$(date "+%Y%m%d")
-      # Compress all error logs into their own tarball:
-    - COPYFILE_DISABLE=1 tar cvzf error-logs-$VERSION.tar.gz *.log
-    - ls -lh error-logs-$VERSION.tar.gz
+    
+      # Make subdirs for each type (and logs) and move types there:
+    - mkdir apple pwg ras logs
+    - mv *.apple *.apple.gz apple/
+    - mv *.pwg   *.pwg.gz   pwg/
+    - mv *.ras   *.ras.gz   ras/
+    - mv *.log   *.log.gz   logs/
+    - COPYFILE_DISABLE=1 tar cvzf apple-raster-samples-$VERSION.tar.gz  apple/
+    - COPYFILE_DISABLE=1 tar cvzf   pwg-raster-samples-$VERSION.tar.gz  pwg/
+    - COPYFILE_DISABLE=1 tar cvzf  cups-raster-samples-$VERSION.tar.gz  cups/
+    - COPYFILE_DISABLE=1 tar cvzf    failed-convs-logs-$VERSION.tar.gz  logs/
+    - ls -lh *-$VERSION.tar.gz
+    - rm -rf apple/ pwg/ ras/ logs/
 
       # Create the final tarball:
     - cd ..
