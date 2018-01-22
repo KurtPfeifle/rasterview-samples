@@ -73,25 +73,33 @@ script:
     - du -hsc *.ras.gz *.apple.gz *.pwg.gz | tail -n 1
 
       # Uncompress 3 random files again, one of each type:
-    - for i in $(ls -1 *.apple.gz | head -n 1) ; do gunzip $i ; done
-    - for i in $(ls -1 *.ras.gz   | tail -n 1) ; do gunzip $i ; done
-    - for i in $(ls -1 *.pwg.gz   | tail -n 5 | head -n 1) ; do gunzip $i ; done
+    - for i in $(ls -1 *.apple.gz | grep -v FAILED | head -n 1) ; do gunzip $i ; done
+    - for i in $(ls -1 *.ras.gz   | grep -v FAILED | tail -n 1) ; do gunzip $i ; done
+    - for i in $(ls -1 *.pwg.gz   | grep -v FAILED | tail -n 5 | head -n 1) ; do gunzip $i ; done
 
       # Set up a VERSION string:
     - VERSION=$TRAVIS_BUILD_NUMBER-$(date "+%Y%m%d")
-    
+
       # Make subdirs for each type (and logs) and move types there:
-    - mkdir apple pwg ras logs
-    - mv *.apple *.apple.gz apple/
-    - mv *.pwg   *.pwg.gz   pwg/
-    - mv *.ras   *.ras.gz   ras/
-    - mv *.log   *.log.gz   logs/
-    - COPYFILE_DISABLE=1 tar cvzf apple-raster-samples-$VERSION.tar.gz  apple/
-    - COPYFILE_DISABLE=1 tar cvzf   pwg-raster-samples-$VERSION.tar.gz  pwg/
-    - COPYFILE_DISABLE=1 tar cvzf  cups-raster-samples-$VERSION.tar.gz  cups/
-    - COPYFILE_DISABLE=1 tar cvzf    failed-convs-logs-$VERSION.tar.gz  logs/
+    - mkdir  failed-convfiles failed-convlogs success-convlogs apple-raster pwg-raster cups-raster
+    - mv *-FAILED.{apple,pwg,ras}     failed-convfiles/
+    - mv *-FAILED.log                 failed-convlogs/
+    - mv *-SUCCESS.log                success-convlogs/
+    - mv *.apple *.apple.gz           apple-raster/
+    - mv *.pwg   *.pwg.gz             pwg-raster/
+    - mv *.ras   *.ras.gz             cups-raster/
+
+      # Make tarball for each subdir:
+    - COPYFILE_DISABLE=1  tar cvzf      failed-convfiles-$VERSION.tar.gz  failed-convfiles/
+    - COPYFILE_DISABLE=1  tar cvzf       failed-convlogs-$VERSION.tar.gz  failed-convlogs/
+    - COPYFILE_DISABLE=1  tar cvzf      success-convlogs-$VERSION.tar.gz  success-convlogs/
+    - COPYFILE_DISABLE=1  tar cvzf  apple-raster-samples-$VERSION.tar.gz  apple-raster/
+    - COPYFILE_DISABLE=1  tar cvzf    pwg-raster-samples-$VERSION.tar.gz  pwg-raster/
+    - COPYFILE_DISABLE=1  tar cvzf   cups-raster-samples-$VERSION.tar.gz  cups-raster/
+
+      # Remove subdirs again, clean up for final tarball:
+    - rm -rf failed-convfiles/ failed-convlogs/ success-convlogs/ apple-raster/ pwg-raster/ cups-raster/
     - ls -lh *-$VERSION.tar.gz
-    - rm -rf apple/ pwg/ ras/ logs/
 
       # Create the final tarball:
     - cd ..
