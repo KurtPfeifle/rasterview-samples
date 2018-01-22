@@ -224,7 +224,7 @@ for cspace in $cspaces; do
 
 			if test $? = 0; then
 				echo " OK"
-				mv $filter-$cspace-$depth-$order-$format{,-SUCCESS}.log
+				mv $filter-$cspace-$depth-$order-$format.log  $filter-$cspace-$depth-$order-$format-SUCCESS.log
 			else
 				echo " FAIL (see log file)"
 				#rm -f $filter-$cspace-$depth-$order.$format
