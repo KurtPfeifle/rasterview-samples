@@ -5,9 +5,9 @@
 #
 # Usage:
 #
-#     ./maketestfiles.sh [depth(s)] [colorspace(s)] [order(s)] [all]
-#                        [pstoraster | imagetoraster | cgpdftoraster |
-#                         cgimagetoraster]
+#     ./maketestfiles.sh [ [depth(s)] [colorspace(s)] [order(s)] | [all] ] \
+#                        [ pstoraster | imagetoraster | cgpdftoraster | cgimagetoraster] \
+#                        [ ras | apple | pwg ]
 #
 
 PPD=rasterview.ppd; export PPD
@@ -100,9 +100,14 @@ for option in $*; do
 			exit 0
 			;;
 
+		failedclean)
+			rm -f *-FAILED.apple *-FAILED.pwg *-FAILED.ras *.log
+			exit 0
+			;;
+
 		help)
-			echo "Usage: $0 [colorspace(s)] [depth(s)] [order(s)] [filter]"
-			echo "       $0 all"
+			echo "Usage: $0 [filter] [format] [colorspace(s)] [depth(s)] [order(s)]"
+			echo "       $0 [filter] [format] [all]"
 			echo "       $0 clean"
 			echo ""
 			echo "Colorspaces: W RGB RGBA K CMY YMC CMYK YMCK KCMY KCMYcm"
@@ -121,8 +126,11 @@ for option in $*; do
 			echo "Orders: Chunked Banded"
 			echo ""
 			echo "Filters: cgimagetoraster cgpdftoraster imagetoraster pdftoraster pstoraster"
+			echo "         (Use maximum of one per command -- if not given,"
+			echo "         defaults to cgpdftoraster on macOS and to pdftoraster on Linux)"
 			echo ""
 			echo "Formats: apple, pwg, ras"
+			echo "         (Use maximum of one per command -- defaults to ras if not given)"
 			echo ""
 			exit 0
 			;;
@@ -175,10 +183,9 @@ for cspace in $cspaces; do
 						"ColorModel=$cspace cupsBitsPerColor=$depth cupsColorOrder=$order" \
 						$basedir/testprint.ps | \
 					$filterpath/$ps_to_raster job user \
-						title 1 \
-						"") \
+						title 1 "") \
 						> $filter-$cspace-$depth-$order.$format \
-						2> $filter-$cspace-$depth-$order.log
+						2> $filter-$cspace-$depth-$order-$format.log
 					;;
 				imagetoraster)
 					$filterpath/imagetoraster job user \
@@ -186,17 +193,16 @@ for cspace in $cspaces; do
 						"scaling=100 ColorModel=$cspace cupsBitsPerColor=$depth cupsColorOrder=$order" \
 						$basedir/testprint.jpg \
 						> $filter-$cspace-$depth-$order.$format \
-						2> $filter-$cspace-$depth-$order.log
+						2> $filter-$cspace-$depth-$order-$format.log
 					;;
 				cgimagetoraster)
 					($filterpath/cgimagetopdf job user title 1 \
-						"" \
-						$basedir/testprint.jpg | \
+						"" $basedir/testprint.jpg | \
 					$filterpath/cgpdftoraster job user \
 						title 1 \
-						"ColorModel=$cspace cupsBitsPerColor=$depth cupsColorOrder=$order") \
+						 "ColorModel=$cspace cupsBitsPerColor=$depth cupsColorOrder=$order") \
 						> $filter-$cspace-$depth-$order.$format \
-						2> $filter-$cspace-$depth-$order.log
+						2> $filter-$cspace-$depth-$order-$format.log
 					;;
 				cgpdftoraster)
 					$filterpath/cgpdftoraster job user \
@@ -204,7 +210,7 @@ for cspace in $cspaces; do
 						"ColorModel=$cspace cupsBitsPerColor=$depth cupsColorOrder=$order" \
 						$basedir/testprint.pdf \
 						> $filter-$cspace-$depth-$order.$format \
-						2> $filter-$cspace-$depth-$order.log
+						2> $filter-$cspace-$depth-$order-$format.log
 					;;
 				pdftoraster)
 					$filterpath/pdftoraster job user \
@@ -212,16 +218,18 @@ for cspace in $cspaces; do
 						"scaling=100 ColorModel=$cspace cupsBitsPerColor=$depth cupsColorOrder=$order" \
 						$basedir/testprint.pdf \
 						> $filter-$cspace-$depth-$order.$format  \
-						2> $filter-$cspace-$depth-$order.log
+						2> $filter-$cspace-$depth-$order-$format.log
 					;;
 			esac
 
 			if test $? = 0; then
 				echo " OK"
-				rm -f $filter-$cspace-$depth-$order.log
+				mv $filter-$cspace-$depth-$order-$format{,-SUCCESS}.log
 			else
 				echo " FAIL (see log file)"
-				rm -f $filter-$cspace-$depth-$order.$format
+				#rm -f $filter-$cspace-$depth-$order.$format
+				mv $filter-$cspace-$depth-$order-$format{,-FAILED}.log
+				mv $filter-$cspace-$depth-$order{,-FAILED}.$format
 			fi
 		done
 	done
