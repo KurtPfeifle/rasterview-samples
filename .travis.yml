@@ -82,12 +82,12 @@ script:
 
       # Make subdirs for each type (and logs) and move types there:
     - mkdir  failed-convfiles failed-convlogs success-convlogs apple-raster pwg-raster cups-raster
-    - mv *-FAILED.{apple,pwg,ras}     failed-convfiles/   || echo "No files: *-FAILED.{apple,pwg,ras}"
-    - mv *-FAILED.log                 failed-convlogs/    || echo "No files: *-FAILED.log"
-    - mv *-SUCCESS.log                success-convlogs/   || echo "No files: *-SUCCESS.log"
-    - mv *.apple *.apple.gz           apple-raster/       || echo "No files: *.apple *.apple.gz"
-    - mv *.pwg   *.pwg.gz             pwg-raster/         || echo "No files: *.pwg   *.pwg.gz"
-    - mv *.ras   *.ras.gz             cups-raster/        || echo "No files: *.ras   *.ras.gz"
+    - mv *-FAILED.{apple,pwg,ras}     failed-convfiles/   || echo "No files: \*-FAILED.{apple,pwg,ras}"
+    - mv *-FAILED.log                 failed-convlogs/    || echo "No files: \*-FAILED.log"
+    - mv *-SUCCESS.log                success-convlogs/   || echo "No files: \*-SUCCESS.log"
+    - mv *.apple *.apple.gz           apple-raster/       || echo "No files: \*.apple \*.apple.gz"
+    - mv *.pwg   *.pwg.gz             pwg-raster/         || echo "No files: \*.pwg   \*.pwg.gz"
+    - mv *.ras   *.ras.gz             cups-raster/        || echo "No files: \*.ras   \*.ras.gz"
 
       # Make tarball for each subdir:
     - COPYFILE_DISABLE=1  tar cvzf      failed-convfiles-$VERSION.tar.gz  failed-convfiles/
