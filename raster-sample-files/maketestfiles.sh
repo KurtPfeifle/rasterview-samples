@@ -228,8 +228,8 @@ for cspace in $cspaces; do
 			else
 				echo " FAIL (see log file)"
 				#rm -f $filter-$cspace-$depth-$order.$format
-				mv $filter-$cspace-$depth-$order-$format{,-FAILED}.log
-				mv $filter-$cspace-$depth-$order{,-FAILED}.$format
+				mv $filter-$cspace-$depth-$order-$format.log  $filter-$cspace-$depth-$order-$format-FAILED.log
+				mv $filter-$cspace-$depth-$order.$format      $filter-$cspace-$depth-$order-FAILED.$format
 			fi
 		done
 	done
