@@ -100,6 +100,11 @@ for option in $*; do
 			exit 0
 			;;
 
+		failedclean)
+			rm -f *-FAILED.apple *-FAILED.pwg *-FAILED.ras *.log
+			exit 0
+			;;
+
 		help)
 			echo "Usage: $0 [filter] [format] [colorspace(s)] [depth(s)] [order(s)]"
 			echo "       $0 [filter] [format] [all]"
@@ -219,11 +224,12 @@ for cspace in $cspaces; do
 
 			if test $? = 0; then
 				echo " OK"
-				rm -f $filter-$cspace-$depth-$order-$format.log
+				mv $filter-$cspace-$depth-$order-$format{,-SUCCESS}.log
 			else
 				echo " FAIL (see log file)"
 				#rm -f $filter-$cspace-$depth-$order.$format
-				mv $filter-$cspace-$depth-$order.$format $filter-$cspace-$depth-$order-FAILED.$format
+				mv $filter-$cspace-$depth-$order-$format{,-FAILED}.log
+				mv $filter-$cspace-$depth-$order{,-FAILED}.$format
 			fi
 		done
 	done
