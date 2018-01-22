@@ -1,6 +1,6 @@
 os: osx
 
-language:
+language: bash
 
 script:
 
